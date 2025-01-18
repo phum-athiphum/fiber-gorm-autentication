@@ -36,7 +36,6 @@ func main() {
 	if host == "" || port == "" || user == "" || password == "" || dbname == "" {
 		log.Fatal("Database environment variables are not set")
 	}
-
 	newLogger := logger.New(
 		log.New(os.Stdout, "\r\n", log.LstdFlags), // io writer
 		logger.Config{
@@ -47,13 +46,16 @@ func main() {
 	)
 
 	// Configure your PostgreSQL database connection string using environment variables
-	dsn := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
+	dsn := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=require", host, port, user, password, dbname)
+	fmt.Println("dsn", dsn)
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
 		Logger: newLogger,
 	})
+
 	if err != nil {
-		panic("failed to connect to database")
+		log.Fatalf("Failed to connect to database: %v", err)
 	}
+
 	print(db)
 	fmt.Println("Database connection successful")
 
